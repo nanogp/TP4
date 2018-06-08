@@ -70,6 +70,33 @@ ArrayList* al_newArrayList(void)
 int al_add(ArrayList* this, void* pElement)
 {
     int returnAux = -1;
+    int reallocError = 0;
+    void** pElementsRealloc;
+
+    if(this != NULL && pElement != NULL)
+    {
+         returnAux = 0;
+        if(this->reservedSize == this->size)
+         {
+            pElementsRealloc = (void**)realloc(this->pElements, sizeof(void*)*(this->reservedSize+AL_INCREMENT));
+            if(pElementsRealloc != NULL)
+            {
+               this->pElements = pElementsRealloc;
+               this->reservedSize += AL_INCREMENT;
+            }
+            else
+            {
+               reallocError = 1;
+            }
+        }
+
+        if(!reallocError)
+        {
+            *(this->pElements+this->size) = pElement;
+            this->size++;
+            returnAux = 0;
+        }
+    }
 
     return returnAux;
 }
@@ -82,6 +109,10 @@ int al_add(ArrayList* this, void* pElement)
 int al_deleteArrayList(ArrayList* this)
 {
     int returnAux = -1;
+    if(this != NULL && pElement != NULL)
+    {
+        
+    }
 
     return returnAux;
 }
