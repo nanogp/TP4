@@ -19,44 +19,44 @@ int contract(ArrayList* this,int index);
  */
 ArrayList* al_newArrayList(void)
 {
-    ArrayList* this;
-    ArrayList* returnAux = NULL;
-    void* pElements;
-    this = (ArrayList *)malloc(sizeof(ArrayList));
+   ArrayList* this;
+   ArrayList* returnAux = NULL;
+   void* pElements;
+   this = (ArrayList *)malloc(sizeof(ArrayList));
 
-    if(this != NULL)
-    {
-        pElements = malloc(sizeof(void *)*AL_INITIAL_VALUE );
-        if(pElements != NULL)
-        {
-            this->size=0;
-            this->pElements=pElements;
-            this->reservedSize=AL_INITIAL_VALUE;
-            this->add=al_add;
-            this->len=al_len;
-            this->set=al_set;
-            this->remove=al_remove;
-            this->clear=al_clear;
-            this->clone=al_clone;
-            this->get=al_get;
-            this->contains=al_contains;
-            this->push=al_push;
-            this->indexOf=al_indexOf;
-            this->isEmpty=al_isEmpty;
-            this->pop=al_pop;
-            this->subList=al_subList;
-            this->containsAll=al_containsAll;
-            this->deleteArrayList = al_deleteArrayList;
-            this->sort = al_sort;
-            returnAux = this;
-        }
-        else
-        {
-            free(this);
-        }
-    }
+   if(this != NULL)
+   {
+      pElements = malloc(sizeof(void *)*AL_INITIAL_VALUE );
+      if(pElements != NULL)
+      {
+         this->size=0;
+         this->pElements=pElements;
+         this->reservedSize=AL_INITIAL_VALUE;
+         this->add=al_add;
+         this->len=al_len;
+         this->set=al_set;
+         this->remove=al_remove;
+         this->clear=al_clear;
+         this->clone=al_clone;
+         this->get=al_get;
+         this->contains=al_contains;
+         this->push=al_push;
+         this->indexOf=al_indexOf;
+         this->isEmpty=al_isEmpty;
+         this->pop=al_pop;
+         this->subList=al_subList;
+         this->containsAll=al_containsAll;
+         this->deleteArrayList = al_deleteArrayList;
+         this->sort = al_sort;
+         returnAux = this;
+      }
+      else
+      {
+         free(this);
+      }
+   }
 
-    return returnAux;
+   return returnAux;
 }
 
 
@@ -69,36 +69,25 @@ ArrayList* al_newArrayList(void)
  */
 int al_add(ArrayList* this, void* pElement)
 {
-    int returnAux = -1;
-    int reallocError = 0;
-    void** pElementsRealloc;
+   int returnAux = -1;
+   int reallocError = 0;
 
-    if(this != NULL && pElement != NULL)
-    {
+   if(this != NULL && pElement != NULL)
+   {
+      if(this->reservedSize == this->size)
+      {
+         reallocError = resizeUp(this);
+      }
+
+      if(!reallocError)
+      {
+         *(this->pElements+this->size) = pElement;
+         this->size++;
          returnAux = 0;
-        if(this->reservedSize == this->size)
-         {
-            pElementsRealloc = (void**)realloc(this->pElements, sizeof(void*)*(this->reservedSize+AL_INCREMENT));
-            if(pElementsRealloc != NULL)
-            {
-               this->pElements = pElementsRealloc;
-               this->reservedSize += AL_INCREMENT;
-            }
-            else
-            {
-               reallocError = 1;
-            }
-        }
+      }
+   }
 
-        if(!reallocError)
-        {
-            *(this->pElements+this->size) = pElement;
-            this->size++;
-            returnAux = 0;
-        }
-    }
-
-    return returnAux;
+   return returnAux;
 }
 
 /** \brief  Delete arrayList
@@ -108,25 +97,30 @@ int al_add(ArrayList* this, void* pElement)
  */
 int al_deleteArrayList(ArrayList* this)
 {
-    int returnAux = -1;
-    if(this != NULL && pElement != NULL)
-    {
-        
-    }
-
-    return returnAux;
+   int returnAux = -1;
+   if(this != NULL)
+   {
+      free(this);
+      returnAux = 0;
+   }
+   return returnAux;
 }
 
-/** \brief  Delete arrayList
+/** \brief  Length of arrayList
  * \param pList ArrayList* Pointer to arrayList
  * \return int Return length of array or (-1) if Error [pList is NULL pointer]
  *
  */
 int al_len(ArrayList* this)
 {
-    int returnAux = -1;
+   int returnAux = -1;
 
-    return returnAux;
+   if(this!=NULL)
+   {
+      returnAux = this->size;
+   }
+
+   return returnAux;
 }
 
 
@@ -138,9 +132,14 @@ int al_len(ArrayList* this)
  */
 void* al_get(ArrayList* this, int index)
 {
-    void* returnAux = NULL;
+   void* returnAux = NULL;
 
-    return returnAux;
+   if(this!=NULL && index <= this->size)
+   {
+      returnAux = *(this->pElements+index);
+   }
+
+   return returnAux;
 }
 
 
@@ -154,9 +153,9 @@ void* al_get(ArrayList* this, int index)
  */
 int al_contains(ArrayList* this, void* pElement)
 {
-    int returnAux = -1;
+   int returnAux = -1;
 
-    return returnAux;
+   return returnAux;
 }
 
 
@@ -170,9 +169,9 @@ int al_contains(ArrayList* this, void* pElement)
  */
 int al_set(ArrayList* this, int index,void* pElement)
 {
-    int returnAux = -1;
+   int returnAux = -1;
 
-    return returnAux;
+   return returnAux;
 }
 
 
@@ -184,9 +183,9 @@ int al_set(ArrayList* this, int index,void* pElement)
  */
 int al_remove(ArrayList* this,int index)
 {
-    int returnAux = -1;
+   int returnAux = -1;
 
-    return returnAux;
+   return returnAux;
 }
 
 
@@ -198,9 +197,9 @@ int al_remove(ArrayList* this,int index)
  */
 int al_clear(ArrayList* this)
 {
-    int returnAux = -1;
+   int returnAux = -1;
 
-    return returnAux;
+   return returnAux;
 }
 
 
@@ -212,9 +211,9 @@ int al_clear(ArrayList* this)
  */
 ArrayList* al_clone(ArrayList* this)
 {
-    ArrayList* returnAux = NULL;
+   ArrayList* returnAux = NULL;
 
-    return returnAux;
+   return returnAux;
 }
 
 
@@ -229,9 +228,9 @@ ArrayList* al_clone(ArrayList* this)
  */
 int al_push(ArrayList* this, int index, void* pElement)
 {
-    int returnAux = -1;
+   int returnAux = -1;
 
-    return returnAux;
+   return returnAux;
 }
 
 
@@ -243,9 +242,9 @@ int al_push(ArrayList* this, int index, void* pElement)
  */
 int al_indexOf(ArrayList* this, void* pElement)
 {
-    int returnAux = -1;
+   int returnAux = -1;
 
-    return returnAux;
+   return returnAux;
 }
 
 
@@ -256,9 +255,9 @@ int al_indexOf(ArrayList* this, void* pElement)
  */
 int al_isEmpty(ArrayList* this)
 {
-    int returnAux = -1;
+   int returnAux = -1;
 
-    return returnAux;
+   return returnAux;
 }
 
 
@@ -272,9 +271,9 @@ int al_isEmpty(ArrayList* this)
  */
 void* al_pop(ArrayList* this,int index)
 {
-    void* returnAux = NULL;
+   void* returnAux = NULL;
 
-    return returnAux;
+   return returnAux;
 }
 
 
@@ -288,9 +287,9 @@ void* al_pop(ArrayList* this,int index)
  */
 ArrayList* al_subList(ArrayList* this,int from,int to)
 {
-    void* returnAux = NULL;
+   void* returnAux = NULL;
 
-    return returnAux ;
+   return returnAux ;
 }
 
 
@@ -305,9 +304,9 @@ ArrayList* al_subList(ArrayList* this,int from,int to)
  */
 int al_containsAll(ArrayList* this,ArrayList* this2)
 {
-    int returnAux = -1;
+   int returnAux = -1;
 
-    return returnAux;
+   return returnAux;
 }
 
 /** \brief Sorts objects of list, use compare pFunc
@@ -319,9 +318,9 @@ int al_containsAll(ArrayList* this,ArrayList* this2)
  */
 int al_sort(ArrayList* this, int (*pFunc)(void* ,void*), int order)
 {
-    int returnAux = -1;
+   int returnAux = -1;
 
-    return returnAux;
+   return returnAux;
 }
 
 
@@ -332,10 +331,21 @@ int al_sort(ArrayList* this, int (*pFunc)(void* ,void*), int order)
  */
 int resizeUp(ArrayList* this)
 {
-    int returnAux = -1;
+   int returnAux = -1;
+   void** pElementsRealloc;
 
-    return returnAux;
+   if(this!=NULL)
+   {
+      pElementsRealloc = (void**)realloc(this->pElements, sizeof(void*)*(this->reservedSize+AL_INCREMENT));
 
+      if(pElementsRealloc != NULL)
+      {
+         this->pElements = pElementsRealloc;
+         this->reservedSize += AL_INCREMENT;
+         returnAux = 0;
+      }
+   }
+   return returnAux;
 }
 
 /** \brief  Expand an array list
@@ -346,9 +356,9 @@ int resizeUp(ArrayList* this)
  */
 int expand(ArrayList* this,int index)
 {
-    int returnAux = -1;
+   int returnAux = -1;
 
-    return returnAux;
+   return returnAux;
 }
 
 /** \brief  Contract an array list
@@ -359,7 +369,7 @@ int expand(ArrayList* this,int index)
  */
 int contract(ArrayList* this,int index)
 {
-    int returnAux = -1;
+   int returnAux = -1;
 
-    return returnAux;
+   return returnAux;
 }
