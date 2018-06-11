@@ -110,6 +110,7 @@ int al_deleteArrayList(ArrayList* this)
          returnAux = 0;
       }
    }
+
    return returnAux;
 }
 
@@ -299,6 +300,7 @@ ArrayList* al_clone(ArrayList* this)
       }
 
    }
+
    return returnAux;
 }
 
@@ -337,6 +339,7 @@ int al_push(ArrayList* this, int index, void* pElement)
          returnAux = 0;
       }
    }
+
    return returnAux;
 }
 
@@ -350,6 +353,18 @@ int al_push(ArrayList* this, int index, void* pElement)
 int al_indexOf(ArrayList* this, void* pElement)
 {
    int returnAux = -1;
+
+   if(this != NULL && pElement != NULL)
+   {
+      for(int i=0 ; i < this->size ; i++)
+      {
+         if(*(this->pElements+i) == pElement)
+         {
+            returnAux = i;
+            break;
+         }
+      }
+   }
 
    return returnAux;
 }
