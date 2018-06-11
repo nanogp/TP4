@@ -483,9 +483,31 @@ ArrayList* al_subList(ArrayList* this, int from, int to)
  * \return int Return (-1) if Error [pList or pList2 are NULL pointer]
  *                  - (0) if Not contains All - (1) if is contains All
  */
-int al_containsAll(ArrayList* this,ArrayList* this2)
+int al_containsAll(ArrayList* this, ArrayList* this2)
 {
    int returnAux = -1;
+
+   if(this != NULL && this2 != NULL)
+   {
+      returnAux = 1;
+      for(int j=0 ; returnAux == 1 && j < this2->size; j++)
+      {
+         for(int i=0 ; i < this->size ; i++)
+         {
+            if(*(this->pElements+i) == *(this2->pElements+j))
+            {
+               break;
+            }
+            else
+            {
+               if(i == this->size-1)
+               {
+                  returnAux = 0;
+               }
+            }
+         }
+      }
+   }
 
    return returnAux;
 }
@@ -497,9 +519,31 @@ int al_containsAll(ArrayList* this,ArrayList* this2)
  * \return int Return (-1) if Error [pList or pFunc are NULL pointer]
  *                  - (0) if ok
  */
-int al_sort(ArrayList* this, int (*pFunc)(void* ,void*), int order)
+int al_sort(ArrayList* this, int (*pFunc)(void*, void*), int order)
 {
    int returnAux = -1;
+   int resultado;
+   void* swapAux;
+
+   if(this != NULL && (*pFunc) != NULL &&
+      (order == 1 || order == 0))
+   {
+      for(int i=0 ; i < this->size-1 ; i++)
+      {
+         for(int j=i+1 ; j < this->size ; j++)
+         {
+            resultado = (*pFunc)(*(this->pElements+i), *(this->pElements+j));
+
+            if((resultado == 1 && order == 1) || (resultado == -1 && order == 0))
+            {
+               swapAux = *(this->pElements+i);
+               *(this->pElements+i) = *(this->pElements+j);
+               *(this->pElements+j) = swapAux;
+            }
+         }
+      }
+      returnAux = 0;
+   }
 
    return returnAux;
 }
