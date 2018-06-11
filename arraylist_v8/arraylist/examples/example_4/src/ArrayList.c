@@ -70,16 +70,16 @@ ArrayList* al_newArrayList(void)
 int al_add(ArrayList* this, void* pElement)
 {
    int returnAux = -1;
-   int reallocError = 0;
+   int resizeError = 0;
 
    if(this != NULL && pElement != NULL)
    {
       if(this->reservedSize == this->size)
       {
-         reallocError = resizeUp(this);
+         resizeError = resizeUp(this);
       }
 
-      if(!reallocError)
+      if(!resizeError)
       {
          *(this->pElements+this->size) = pElement;
          this->size++;
@@ -157,6 +157,20 @@ int al_contains(ArrayList* this, void* pElement)
 {
    int returnAux = -1;
 
+   if(this != NULL && pElement != NULL)
+   {
+      returnAux = 0;
+
+      for(int i=0 ; i < this->size ; i++)
+      {
+         if(al_get(this, i) == pElement)
+         {
+            returnAux = 1;
+            break;
+         }
+      }
+   }
+
    return returnAux;
 }
 
@@ -169,9 +183,16 @@ int al_contains(ArrayList* this, void* pElement)
  *                  - ( 0) if Ok
  *
  */
-int al_set(ArrayList* this, int index,void* pElement)
+int al_set(ArrayList* this, int index, void* pElement)
 {
    int returnAux = -1;
+
+   if(this!=NULL && pElement != NULL &&
+      index >= 0 && index <= this->size)
+   {
+      *(this->pElements+index) = pElement;
+      returnAux = 0;
+   }
 
    return returnAux;
 }
@@ -183,9 +204,29 @@ int al_set(ArrayList* this, int index,void* pElement)
  * \return int Return (-1) if Error [pList is NULL pointer or invalid index]
  *                  - ( 0) if Ok
  */
-int al_remove(ArrayList* this,int index)
+int al_remove(ArrayList* this, int index)
 {
    int returnAux = -1;
+
+   if(this!=NULL &&
+      index >= 0 &&
+      index <= this->size)
+   {
+      free(*(this->pElements+index));
+      this->size--;
+
+      for(int i=index ; i < this->size ; i++)
+      {
+         *(this->pElements+index) = *(this->pElements+index+1);
+      }
+
+      if(this->reservedSize - this->size > AL_INCREMENT)
+      {
+         contract(this, this->size+AL_INCREMENT);
+      }
+
+      returnAux = 0;
+   }
 
    return returnAux;
 }
@@ -200,6 +241,19 @@ int al_remove(ArrayList* this,int index)
 int al_clear(ArrayList* this)
 {
    int returnAux = -1;
+
+   if(this!=NULL)
+   {
+      for(int i=0 ; i < this->size ; i++)
+      {
+         free(*(this->pElements+i));
+         this->size = 0;
+      }
+
+      contract(this, this->size);
+
+      returnAux = 0;
+   }
 
    return returnAux;
 }
@@ -356,10 +410,22 @@ int resizeUp(ArrayList* this)
  * \return int Return (-1) if Error [pList is NULL pointer or invalid index]
  *                  - ( 0) if Ok
  */
-int expand(ArrayList* this,int index)
+int expand(ArrayList* this, int index)
 {
    int returnAux = -1;
+   void** pElementsRealloc;
 
+   if(this!=NULL)
+   {
+      pElementsRealloc = (void**)realloc(this->pElements, sizeof(void*)*index);
+
+      if(pElementsRealloc != NULL)
+      {
+         this->pElements = pElementsRealloc;
+         this->reservedSize = index;
+         returnAux = 0;
+      }
+   }
    return returnAux;
 }
 
@@ -369,9 +435,21 @@ int expand(ArrayList* this,int index)
  * \return int Return (-1) if Error [pList is NULL pointer or invalid index]
  *                  - ( 0) if Ok
  */
-int contract(ArrayList* this,int index)
+int contract(ArrayList* this, int index)
 {
    int returnAux = -1;
+   void** pElementsRealloc;
 
+   if(this!=NULL)
+   {
+      pElementsRealloc = (void**)realloc(this->pElements, sizeof(void*)*index);
+
+      if(pElementsRealloc != NULL)
+      {
+         this->pElements = pElementsRealloc;
+         this->reservedSize = index;
+         returnAux = 0;
+      }
+   }
    return returnAux;
 }
