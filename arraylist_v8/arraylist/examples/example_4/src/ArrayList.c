@@ -280,7 +280,7 @@ ArrayList* al_clone(ArrayList* this)
    {
       returnAux = al_newArrayList();
 
-      if(returnAux!= NULL)
+      if(returnAux != NULL)
       {
          resizeError = expand(returnAux, this->reservedSize);
 
@@ -439,9 +439,36 @@ void* al_pop(ArrayList* this, int index)
  * \return int Return (NULL) if Error [pList is NULL pointer or invalid 'from' or invalid 'to']
  *                  - ( pointer to new array) if Ok
  */
-ArrayList* al_subList(ArrayList* this,int from,int to)
+ArrayList* al_subList(ArrayList* this, int from, int to)
 {
-   void* returnAux = NULL;
+   ArrayList* returnAux = NULL;
+   int sublistSize = to-from;
+   int resizeError;
+
+   if(this != NULL &&
+      from >= 0 && to < this->size)
+   {
+      returnAux = al_newArrayList();
+
+      if(returnAux != NULL)
+      {
+         resizeError = expand(returnAux, sublistSize);
+
+         if(!resizeError)
+         {
+            for(int i=from ; i < to ; i++)
+            {
+               *(returnAux->pElements+i) = *(this->pElements+i);
+            }
+            returnAux->size = sublistSize;
+         }
+         else
+         {
+            free(returnAux);
+            returnAux = NULL;
+         }
+      }
+   }
 
    return returnAux ;
 }
