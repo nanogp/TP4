@@ -98,10 +98,17 @@ int al_add(ArrayList* this, void* pElement)
 int al_deleteArrayList(ArrayList* this)
 {
    int returnAux = -1;
+   int huboError;
+
    if(this != NULL)
    {
-      free(this);
-      returnAux = 0;
+      huboError = al_clear(this);
+
+      if(!huboError)
+      {
+         free(this);
+         returnAux = 0;
+      }
    }
    return returnAux;
 }
@@ -135,8 +142,7 @@ void* al_get(ArrayList* this, int index)
    void* returnAux = NULL;
 
    if(this!=NULL &&
-      index >= 0 &&
-      index <= this->size)
+      index >= 0 && index <= this->size)
    {
       returnAux = *(this->pElements+index);
    }
@@ -209,8 +215,7 @@ int al_remove(ArrayList* this, int index)
    int returnAux = -1;
 
    if(this!=NULL &&
-      index >= 0 &&
-      index <= this->size)
+      index >= 0 && index <= this->size)
    {
       free(*(this->pElements+index));
       this->size--;
@@ -268,7 +273,32 @@ int al_clear(ArrayList* this)
 ArrayList* al_clone(ArrayList* this)
 {
    ArrayList* returnAux = NULL;
+   int resizeError;
 
+   if(this!=NULL)
+   {
+      returnAux = al_newArrayList();
+
+      if(returnAux!= NULL)
+      {
+         resizeError = expand(returnAux, this->reservedSize);
+
+         if(!resizeError)
+         {
+            for(int i=0 ; i<this->size ; i++)
+            {
+               *(returnAux->pElements+i) = *(this->pElements+i);
+            }
+            returnAux->size = this->size;
+         }
+         else
+         {
+            free(returnAux);
+            returnAux = NULL;
+         }
+      }
+
+   }
    return returnAux;
 }
 
