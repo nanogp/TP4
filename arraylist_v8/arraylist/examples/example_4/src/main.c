@@ -40,7 +40,7 @@ int main(void)
         startTesting(10);//al_clone
         startTesting(11);//al_push
         startTesting(12);//al_indexOf
-        //startTesting(13);//al_isEmpty
+        startTesting(13);//al_isEmpty
         //startTesting(14);//al_pop
         //startTesting(15);//al_subList
         //startTesting(16);//al_containsAll

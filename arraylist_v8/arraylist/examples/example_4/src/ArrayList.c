@@ -379,6 +379,16 @@ int al_isEmpty(ArrayList* this)
 {
    int returnAux = -1;
 
+   if(this != NULL)
+   {
+      returnAux = 0;
+
+      if(!this->size)
+      {
+         returnAux = 1;
+      }
+   }
+
    return returnAux;
 }
 
