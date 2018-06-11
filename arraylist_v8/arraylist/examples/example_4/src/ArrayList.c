@@ -401,9 +401,31 @@ int al_isEmpty(ArrayList* this)
  * \return int Return (NULL) if Error [pList is NULL pointer or invalid index]
  *                  - ( element pointer) if Ok
  */
-void* al_pop(ArrayList* this,int index)
+void* al_pop(ArrayList* this, int index)
 {
    void* returnAux = NULL;
+
+   if(this != NULL &&
+      index >= 0 && index <= this->size)
+   {
+      returnAux = al_get(this, index);
+
+      if(returnAux != NULL)
+      {
+         this->size--;
+
+         for(int i=index ; i < this->size ; i++)
+         {
+            *(this->pElements+index) = *(this->pElements+index+1);
+         }
+
+         if(this->reservedSize - this->size > AL_INCREMENT)
+         {
+            contract(this, this->size+AL_INCREMENT);
+         }
+
+      }
+   }
 
    return returnAux;
 }
