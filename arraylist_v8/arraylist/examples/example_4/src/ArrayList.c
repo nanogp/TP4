@@ -5,8 +5,8 @@
 
 // funciones privadas
 int resizeUp(ArrayList* this);
-int expand(ArrayList* this,int index);
-int contract(ArrayList* this,int index);
+int expand(ArrayList* this, int index);
+int contract(ArrayList* this, int index);
 
 #define AL_INCREMENT      10
 #define AL_INITIAL_VALUE  10
@@ -142,7 +142,7 @@ void* al_get(ArrayList* this, int index)
 {
    void* returnAux = NULL;
 
-   if(this != NULL && index >= 0 && index <= this->size)
+   if(this != NULL && index >= 0 && index < this->size)
    {
       returnAux = *(this->pElements+index);
    }
@@ -194,8 +194,9 @@ int al_set(ArrayList* this, int index, void* pElement)
    int returnAux = -1;
 
    if(this != NULL && pElement != NULL &&
-      index >= 0 && index <= this->size)
+      index >= 0 && index < this->size)
    {
+      free(*(this->pElements+index));
       *(this->pElements+index) = pElement;
       returnAux = 0;
    }
@@ -214,7 +215,7 @@ int al_remove(ArrayList* this, int index)
 {
    int returnAux = -1;
 
-   if(this != NULL && index >= 0 && index <= this->size)
+   if(this != NULL && index >= 0 && index < this->size)
    {
       free(*(this->pElements+index));
       this->size--;
@@ -328,7 +329,7 @@ int al_push(ArrayList* this, int index, void* pElement)
       {
          for(int i=this->size ; i > index  ; i--)
          {
-            *(this->pElements+i+1) = *(this->pElements+i);
+            *(this->pElements+i) = *(this->pElements+i-1);
          }
 
          *(this->pElements+index) = pElement;
@@ -402,7 +403,7 @@ void* al_pop(ArrayList* this, int index)
 {
    void* returnAux = NULL;
 
-   if(this != NULL && index >= 0 && index <= this->size)
+   if(this != NULL && index >= 0 && index < this->size)
    {
       returnAux = al_get(this, index);
 
@@ -412,10 +413,10 @@ void* al_pop(ArrayList* this, int index)
 
          for(int i=index ; i < this->size ; i++)
          {
-            *(this->pElements+index) = *(this->pElements+index+1);
+            *(this->pElements+i) = *(this->pElements+i+1);
          }
 
-         if(this->reservedSize - this->size > AL_INCREMENT)
+         if(this->reservedSize - this->size > this->size + AL_INCREMENT)
          {
             contract(this, this->size+AL_INCREMENT);
          }
@@ -451,7 +452,7 @@ ArrayList* al_subList(ArrayList* this, int from, int to)
 
          if(!resizeError)
          {
-            for(int i=from ; i < to ; i++)
+            for(int i=from ; i <= to ; i++)
             {
                *(returnAux->pElements+i) = *(this->pElements+i);
             }
