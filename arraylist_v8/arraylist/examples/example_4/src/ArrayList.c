@@ -254,7 +254,7 @@ int al_clear(ArrayList* this)
       }
 
       this->size = 0;
-      contract(this, 0);
+      contract(this, AL_INCREMENT);
       returnAux = 0;
    }
 
