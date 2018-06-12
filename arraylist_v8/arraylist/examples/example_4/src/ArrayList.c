@@ -102,10 +102,8 @@ int al_deleteArrayList(ArrayList* this)
 
    if(this != NULL)
    {
-      huboError = al_clear(this);
       clearError = al_clear(this);
 
-      if(!huboError)
       if(!clearError)
       {
          free(this);
@@ -144,6 +142,7 @@ void* al_get(ArrayList* this, int index)
 {
    void* returnAux = NULL;
 
+   if(this != NULL && index >= 0 && index <= this->size)
    {
       returnAux = *(this->pElements+index);
    }
