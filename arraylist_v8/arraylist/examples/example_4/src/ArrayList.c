@@ -437,7 +437,7 @@ void* al_pop(ArrayList* this, int index)
  */
 ArrayList* al_subList(ArrayList* this, int from, int to)
 {
-   ArrayList* returnAux = NULL;
+   ArrayList* returnAux;
    int subListSize = to-from;
    int resizeError;
 
