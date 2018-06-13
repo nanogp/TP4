@@ -642,9 +642,9 @@ int contract(ArrayList* this, int index)
          *(this->pElements+index) = *(this->pElements+index+1);
       }
 
-      if(this->reservedSize-(2*AL_INCREMENT) >= this->size)
+      if(this->reservedSize-this->size > AL_INCREMENT)
       {
-         resizeDown(this);
+         resize(this, this->size+AL_INCREMENT);
       }
 
       returnAux = 0;
