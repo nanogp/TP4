@@ -411,8 +411,7 @@ void* al_pop(ArrayList* this, int index)
 ArrayList* al_subList(ArrayList* this, int from, int to)
 {
    ArrayList* returnAux;
-   int subListSize = to-from;
-   int resizeError;
+   void* pElement;
 
    if(this != NULL && from >= 0 && to <= this->len(this))
    {
@@ -420,21 +419,18 @@ ArrayList* al_subList(ArrayList* this, int from, int to)
 
       if(returnAux != NULL)
       {
-         resizeError = resize(returnAux, subListSize + AL_INCREMENT);
-
-         if(!resizeError)
+         for(int i=from ; i <= to ; i++)
          {
-            for(int i=from ; i <= to ; i++)
+            pElement = this->get(this, i);
+
+            if(pElement != NULL)
             {
-               returnAux->set(returnAux, i, this->get(this, i));
+               if(returnAux->add(returnAux, pElement))
+               {
+                  returnAux->deleteArrayList(returnAux);
+                  break;
+               }
             }
-
-            returnAux->size = subListSize;
-         }
-         else
-         {
-            free(returnAux);
-            returnAux = NULL;
          }
       }
    }
