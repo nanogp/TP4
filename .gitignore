@@ -51,3 +51,5 @@ Module.symvers
 Mkfile.old
 dkms.conf
 *.layout
+arraylist_v8/arraylist/examples/example_4/src/utest.depend
+arraylist_v8/arraylist/examples/example_4/src/utest.layout
