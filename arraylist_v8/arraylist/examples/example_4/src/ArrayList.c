@@ -390,7 +390,7 @@ ArrayList* al_subList(ArrayList* this, int from, int to)
 
       if(returnAux != NULL)
       {
-         for(int i=from ; i <= to ; i++)
+         for(int i=from ; i < to ; i++)
          {
             if(returnAux->add(returnAux, this->get(this, i)))
             {
