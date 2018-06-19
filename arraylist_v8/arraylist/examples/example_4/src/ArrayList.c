@@ -104,6 +104,7 @@ int al_deleteArrayList(ArrayList* this)
    {
       free(this->pElements);
       free(this);
+      this = NULL;
       returnAux = 0;
    }
 
@@ -259,28 +260,10 @@ int al_clear(ArrayList* this)
 ArrayList* al_clone(ArrayList* this)
 {
    ArrayList* returnAux = NULL;
-   void* pElement;
 
    if(this != NULL)
    {
-      returnAux = al_newArrayList();
-
-      if(returnAux != NULL)
-      {
-         for(int i=0 ; i < this->len(this) ; i++)
-         {
-            pElement = this->get(this, i);
-
-            if(pElement != NULL)
-            {
-               if(returnAux->add(returnAux, pElement))
-               {
-                  returnAux->deleteArrayList(returnAux);
-                  break;
-               }
-            }
-         }
-      }
+      returnAux = this->subList(this, 0, this->len(this)-1);
    }
 
    return returnAux;
@@ -410,10 +393,10 @@ void* al_pop(ArrayList* this, int index)
  */
 ArrayList* al_subList(ArrayList* this, int from, int to)
 {
-   ArrayList* returnAux;
+   ArrayList* returnAux = NULL;
    void* pElement;
 
-   if(this != NULL && from >= 0 && to <= this->len(this))
+   if(this != NULL && from >= 0 && to <= this->len(this) && from <= to)
    {
       returnAux = al_newArrayList();
 
@@ -428,6 +411,7 @@ ArrayList* al_subList(ArrayList* this, int from, int to)
                if(returnAux->add(returnAux, pElement))
                {
                   returnAux->deleteArrayList(returnAux);
+                  returnAux = NULL;
                   break;
                }
             }
@@ -435,7 +419,7 @@ ArrayList* al_subList(ArrayList* this, int from, int to)
       }
    }
 
-   return returnAux ;
+   return returnAux;
 }
 
 
