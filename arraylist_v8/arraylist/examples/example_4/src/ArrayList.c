@@ -5,6 +5,7 @@
 
 // funciones privadas
 int resizeUp(ArrayList* this);
+int resizeDown(ArrayList* this);
 int resize(ArrayList* this, int size);
 int expand(ArrayList* this, int index);
 int contract(ArrayList* this, int index);
@@ -244,7 +245,7 @@ int al_clear(ArrayList* this)
    {
       this->size = 0;
 
-      returnAux = resize(this, AL_INCREMENT);
+      returnAux = resizeDown(this);
    }
 
    return returnAux;
@@ -285,11 +286,9 @@ int al_push(ArrayList* this, int index, void* pElement)
 
    if(this != NULL && pElement != NULL && index >= 0 && index <= this->len(this))
    {
-      if(index == this->len(this))
-      {
-         returnAux = this->add(this, pElement);
-      }
-      else
+      returnAux = this->add(this, pElement);
+
+      if(index < this->len(this))
       {
          if(!expand(this, index))
          {
@@ -362,21 +361,11 @@ int al_isEmpty(ArrayList* this)
 void* al_pop(ArrayList* this, int index)
 {
    void* returnAux = NULL;
-   int removeError;
 
    if(this != NULL && index >= 0 && index < this->len(this))
    {
       returnAux = this->get(this, index);
-
-      if(returnAux != NULL)
-      {
-         removeError = this->remove(this, index);
-
-         if(removeError)
-         {
-            returnAux = NULL;
-         }
-      }
+      this->remove(this, index);
    }
 
    return returnAux;
@@ -394,7 +383,6 @@ void* al_pop(ArrayList* this, int index)
 ArrayList* al_subList(ArrayList* this, int from, int to)
 {
    ArrayList* returnAux = NULL;
-   void* pElement;
 
    if(this != NULL && from >= 0 && to <= this->len(this) && from <= to)
    {
@@ -404,16 +392,11 @@ ArrayList* al_subList(ArrayList* this, int from, int to)
       {
          for(int i=from ; i <= to ; i++)
          {
-            pElement = this->get(this, i);
-
-            if(pElement != NULL)
+            if(returnAux->add(returnAux, this->get(this, i)))
             {
-               if(returnAux->add(returnAux, pElement))
-               {
-                  returnAux->deleteArrayList(returnAux);
-                  returnAux = NULL;
-                  break;
-               }
+               returnAux->deleteArrayList(returnAux);
+               returnAux = NULL;
+               break;
             }
          }
       }
@@ -529,16 +512,10 @@ int resize(ArrayList* this, int size)
 int resizeUp(ArrayList* this)
 {
    int returnAux = -1;
-   int resizeError;
 
    if(this != NULL)
    {
-      resizeError = resize(this, (this->reservedSize+AL_INCREMENT));
-
-      if(!resizeError)
-      {
-         returnAux = 0;
-      }
+      returnAux = resize(this, (this->reservedSize+AL_INCREMENT));
    }
 
    return returnAux;
@@ -552,15 +529,14 @@ int resizeUp(ArrayList* this)
 int resizeDown(ArrayList* this)
 {
    int returnAux = -1;
-   int resizeError;
 
    if(this != NULL)
    {
-      resizeError = resize(this, (this->reservedSize-AL_INCREMENT));
+      returnAux = 0;
 
-      if(!resizeError)
+      if(this->reservedSize - this->len(this) > AL_INCREMENT)
       {
-         returnAux = 0;
+         returnAux = resize(this, this->len(this)+AL_INCREMENT);
       }
    }
 
@@ -576,25 +552,15 @@ int resizeDown(ArrayList* this)
 int expand(ArrayList* this, int index)
 {
    int returnAux = -1;
-   int resizeError = 0;
 
-   if(this != NULL && index >= 0 && index <= this->len(this))
+   if(this != NULL && index >= 0 && index < this->len(this))
    {
-      if(this->reservedSize == this->len(this))
+      for(int i=this->len(this)-1 ; i > index  ; i--)
       {
-         resizeError = resizeUp(this);
+         this->set(this, i, this->get(this, i-1));
       }
 
-      if(!resizeError)
-      {
-         for(int i=this->len(this)-1 ; i > index  ; i--)
-         {
-            this->set(this, i, this->get(this, i-1));
-         }
-
-         this->size++;
-         returnAux = 0;
-      }
+      returnAux = 0;
    }
 
    return returnAux;
@@ -617,10 +583,7 @@ int contract(ArrayList* this, int index)
          this->set(this, i, this->get(this, i+1));
       }
 
-      if(this->reservedSize - this->len(this) > AL_INCREMENT)
-      {
-         resize(this, this->len(this)+AL_INCREMENT);
-      }
+      resizeDown(this);
 
       returnAux = 0;
    }
